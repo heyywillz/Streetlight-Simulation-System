@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="A system to simulate streetlights based on various parameters."
+    />
+    <title>Streetlight Simulation System</title>
+
+    <!-- Mapbox CSS -->
+    <link
+      href="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.css"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+      integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+
+    <!-- Mapbox JS -->
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.js"></script>
+    <script src="script.js" defer></script>
+  </head>
+  <body>
+    <button class="menu-toggle" id="menuToggle">
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="overlay" id="overlay"></div>
+
+    <main class="dashboard">
+      <div class="tab" id="sidebar">
+        <div class="tab-head">
+          <img src="assets/Streetlight-image.png" alt="Streetlight" />
+          <h2>StreetlightHQ</h2>
+        </div>
+        <nav>
+          <ul>
+            <li class="active">
+              <a href="#" data-view="status"> Status </a>
+            </li>
+            <li>
+              <a href="#" data-view="map"> Map </a>
+            </li>
+            <li>
+              <a href="#" data-view="about"> About </a>
+            </li>
+          </ul>
+        </nav>
+        <div class="logout">
+          <i class="fa-solid fa-user"></i>
+          <a href="./index.html">Logout</a>
+        </div>
+      </div>
+
+      <div class="view" id="viewContainer">
+        <div class="view-content" id="statusView">
+          <div class="status-header">
+            <h1>System Dashboard</h1>
+            <p>Real-time monitoring of streetlight network</p>
+          </div>
+          <div class="stats-grid">
+            <div class="stat-card total">
+              <div class="stat-card-header">
+                <h3>Total Lights</h3>
+                <div class="stat-icon total">
+                  <i class="fas fa-lightbulb"></i>
+                </div>
+              </div>
+              <div class="stat-content">
+                <div class="stat-value" id="totalLights">12</div>
+                <div class="stat-meta">
+                  <div class="stat-label">Operational</div>
+                  <div class="stat-percentage">100%</div>
+                </div>
+              </div>
+            </div>
+            <div class="stat-card active">
+              <div class="stat-card-header">
+                <h3>Lights ON</h3>
+                <div class="stat-icon active">
+                  <i class="fas fa-lightbulb"></i>
+                </div>
+              </div>
+              <div class="stat-content">
+                <div class="stat-value" id="onLights">7</div>
+                <div class="stat-meta">
+                  <div class="stat-label">Active</div>
+                  <div class="stat-percentage" id="onPercent">58%</div>
+                </div>
+              </div>
+            </div>
+            <div class="stat-card inactive">
+              <div class="stat-card-header">
+                <h3>Lights OFF</h3>
+                <div class="stat-icon inactive">
+                  <i class="fas fa-lightbulb"></i>
+                </div>
+              </div>
+              <div class="stat-content">
+                <div class="stat-value" id="offLights">3</div>
+                <div class="stat-meta">
+                  <div class="stat-label">Inactive</div>
+                  <div class="stat-percentage" id="offPercent">25%</div>
+                </div>
+              </div>
+            </div>
+            <div class="stat-card fault">
+              <div class="stat-card-header">
+                <h3>Faults</h3>
+                <div class="stat-icon fault">
+                  <i class="fas fa-triangle-exclamation"></i>
+                </div>
+              </div>
+              <div class="stat-content">
+                <div class="stat-value" id="faultLights">2</div>
+                <div class="stat-meta">
+                  <div class="stat-label">Needs Attention</div>
+                  <div class="stat-percentage" id="faultPercent">17%</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="lights-section-grid">
+            <div class="light-section">
+              <div class="light-section-header">
+                <div class="light-section-title">
+                  <h2>Active Lights</h2>
+                  <span class="count-badge" id="activeBadge">10</span>
+                </div>
+                <button class="view-map-btn" id="viewActiveMapBtn">
+                  View Map
+                </button>
+              </div>
+              <div class="lights-list" id="activeLightsList">
+                <!-- Active lights will be rendered here -->
+              </div>
+            </div>
+
+            <div class="light-section fault-section">
+              <div class="light-section-header">
+                <div class="light-section-title">
+                  <h2>Faulty Lights</h2>
+                  <span class="count-badge" id="faultBadge">2</span>
+                </div>
+                <button class="view-map-btn" id="viewFaultMapBtn">
+                  View Map
+                </button>
+              </div>
+              <div class="lights-list" id="faultyLightsList">
+                <!-- Faulty lights will be rendered here -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="view-content" id="mapView" style="display: none">
+          <div class="map-display">
+            <div class="map-container" id="mapContainer">
+              <div class="map-placeholder"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="view-content" id="aboutView" style="display: none">
+          <div class="status-header">
+            <h1>About the System</h1>
+            <p>Smart Street Light Simulation System</p>
+          </div>
+          <div class="light-section">
+            <h2>System Information</h2>
+            <div style="padding: 1rem; line-height: 1.8; color: #6c757d">
+              <p style="margin-bottom: 1rem">
+                The Smart Street Light Simulation System is a technology-driven
+                prototype designed to model, simulate, and visualize the
+                operation of an intelligent street lighting network using
+                geographic data. The project integrates modern web technologies
+                with geospatial mapping to replicate real-world street light
+                behaviors and conditions in a controlled virtual environment.
+              </p>
+              <p>
+                The simulation system aims to replicate a functional smart
+                lighting environment where each street light is represented on
+                an interactive digital map according to its geographic
+                coordinates. Users can view, monitor, and manage light statuses
+                (e.g., ON, OFF, or FAULT) through a web-based dashboard
+                interface.
+              </p>
+              <p>
+                <strong style="color: #1a1a1a">Key Features:</strong>
+              </p>
+              <ul style="margin-left: 1.5rem; margin-top: 0.5rem">
+                <li>Real-time status monitoring</li>
+                <li>Interactive map visualization with Mapbox</li>
+                <li>Fault detection and alerts</li>
+                <li>Energy-efficient management</li>
+                <li>Color-coded status indicators</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>
